@@ -59,14 +59,6 @@
       "Description" : "Existing security group that should be granted administrative access to Mesos (e.g., 'sg-123456')",
       "Type": "String"
     },
-    "Subnets" : {
-      "Description" : "List of VPC subnet IDs for the cluster. Must match the passed AvailabilityZones.",
-      "Type" : "CommaDelimitedList"
-    },
-    "VpcId" : {
-      "Description" : "VPC associated with the provided subnets",
-      "Type" : "String"
-    },
     "AvailabilityZones": {
       "Description" : "(Optional) If passed, only launch nodes in these AZs (e.g., 'us-east-1a,us-east-1b'). Must match the passed Subnets.",
       "Type" : "CommaDelimitedList",
@@ -117,7 +109,6 @@
         "MinSize" : { "Ref" : "ClusterSize" },
         "MaxSize" : { "Ref" : "ClusterSize" },
         "DesiredCapacity" : { "Ref" : "ClusterSize" },
-        "VPCZoneIdentifier" : { "Ref" : "Subnets" },
         "Tags" : [
           {
             "Key" : "role",
@@ -202,7 +193,7 @@
       "Properties" : {
         "KeyName" : { "Ref" : "KeyName" },
         "ImageId" : { "Ref" : "InstanceAmi" },
-        "SecurityGroups" : [ { "Ref" : "SecurityGroup" }, { "Ref" : "ZkClientSecurityGroup" }, { "Ref" : "AdminSecurityGroup" } ],
+        "SecurityGroups" : [ { "Fn::GetAtt" : ["SecurityGroup","GroupId"] }, { "Ref" : "ZkClientSecurityGroup" }, { "Ref" : "AdminSecurityGroup" } ],
         "AssociatePublicIpAddress": "true",
         "InstanceType" : { "Ref" : "InstanceType" },
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
@@ -258,7 +249,6 @@
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "Enable SSH, Mesos, and Marathon access",
-        "VpcId" : { "Ref" : "VpcId" },
         "SecurityGroupIngress" :
           [ { "IpProtocol" : "tcp", "FromPort" : "5051", "ToPort" : "5051", "SourceSecurityGroupId" : { "Ref" : "MesosMasterSecurityGroup"} } ]
       }
@@ -268,7 +258,7 @@
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": { "Ref": "MesosMasterSecurityGroup" },
-        "IpProtocol": "-1",
+        "IpProtocol": "tcp",
         "FromPort": "0",
         "ToPort": "65535",
         "SourceSecurityGroupId": { "Ref": "SecurityGroup" }
