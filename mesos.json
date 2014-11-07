@@ -14,14 +14,6 @@
       "Description" : "Existing EC2 KeyPair to be associated with all cluster instances for SSH access. For default AMIs, log in as the 'ubuntu' user.",
       "Type" : "String"
     },
-    "Subnets" : {
-      "Description" : "List of VPC subnet IDs in which to launch the cluster. Must match the passed AvailabilityZones.",
-      "Type" : "String"
-    },
-    "VpcId" : {
-      "Description" : "VPC associated with the provided subnets",
-      "Type" : "String"
-    },
     "AvailabilityZones": {
       "Description" : "(Optional) If passed, only launch nodes in these AZs (e.g., 'us-east-1a,us-east-1b'). Must match the passed Subnets.",
       "Type" : "String",
@@ -170,8 +162,6 @@
           "ExhibitorDiscoveryUrl" : { "Ref" : "ExhibitorDiscoveryUrl" },
           "ZkClientSecurityGroup" : { "Ref" : "ZkClientSecurityGroup" },
           "AdminSecurityGroup" : { "Ref" : "AdminSecurityGroup" },
-          "Subnets" : { "Ref" : "Subnets" },
-          "VpcId" : { "Ref" : "VpcId" },
           "AvailabilityZones" : { "Ref" : "AvailabilityZones" }
         }
       }
@@ -196,8 +186,6 @@
           "ZkClientSecurityGroup" : { "Ref" : "ZkClientSecurityGroup" },
           "MesosMasterSecurityGroup" : { "Fn::GetAtt" : [ "MesosMasterStack", "Outputs.MesosMasterSecurityGroup" ] },
           "AdminSecurityGroup" : { "Ref" : "AdminSecurityGroup" },
-          "Subnets" : { "Ref" : "Subnets" },
-          "VpcId" : { "Ref" : "VpcId" },
           "AvailabilityZones" : { "Ref" : "AvailabilityZones" }
         }
       }
